@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Private CS Portfolio",
-  description: "Private recruiter portfolio for selected computer science projects.",
-  robots: { index: false, follow: false, nocache: true },
+  title: "CS Portfolio — Selected Builds",
+  description: "Selected computer science builds for recruiter review.",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 

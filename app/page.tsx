@@ -1,4 +1,7 @@
+type ProjectId = "habit-pwa" | "study-habit" | "preset-mall";
+
 type ProjectCard = {
+  id: ProjectId;
   name: string;
   eyebrow: string;
   status: string;
@@ -6,10 +9,18 @@ type ProjectCard = {
   stack: string[];
   evidence: string[];
   accent: "lime" | "violet" | "coral";
+  demoUrl?: string;
+};
+
+const demoUrls: Record<ProjectId, string | undefined> = {
+  "habit-pwa": undefined,
+  "study-habit": undefined,
+  "preset-mall": undefined,
 };
 
 const projectCards: ProjectCard[] = [
   {
+    id: "habit-pwa",
     name: "Habit PWA",
     eyebrow: "LOCAL-FIRST PWA",
     status: "Demo-ready",
@@ -20,6 +31,7 @@ const projectCards: ProjectCard[] = [
     accent: "lime",
   },
   {
+    id: "study-habit",
     name: "Study Habit",
     eyebrow: "FOCUS DASHBOARD",
     status: "Demo-ready",
@@ -30,6 +42,7 @@ const projectCards: ProjectCard[] = [
     accent: "violet",
   },
   {
+    id: "preset-mall",
     name: "Preset Mall",
     eyebrow: "MARKETPLACE MVP",
     status: "Mock product demo",
@@ -39,36 +52,38 @@ const projectCards: ProjectCard[] = [
     evidence: ["Search & filters", "Creator routes", "Explicit mock flows"],
     accent: "coral",
   },
-];
+].map((project) => ({
+  ...project,
+  demoUrl: demoUrls[project.id],
+}));
 
 export default function Home() {
   return (
     <main className="portfolio-shell">
       <nav className="topbar" aria-label="Portfolio navigation">
-        <a className="wordmark" href="#top" aria-label="Private CS Portfolio home">
+        <a className="wordmark" href="#top" aria-label="CS Portfolio home">
           <span className="wordmark-mark" aria-hidden="true">↗</span>
-          PRIVATE / CS
+          CS / PORTFOLIO
         </a>
-        <span className="access-chip">RECRUITER ACCESS ONLY</span>
+        <span className="access-chip">PUBLIC ENTRY</span>
       </nav>
 
       <section className="hero" id="top">
         <div>
           <p className="kicker">PORTFOLIO INDEX · 2026</p>
-          <h1>Builds with<br /><em>evidence.</em></h1>
+          <h1>Selected builds<br />for <em>recruiter review.</em></h1>
         </div>
         <div className="hero-note">
           <p>
-            A private record of product thinking, frontend implementation, and
-            local-first software experiments.
+            Source repositories are private and available for review on request.
           </p>
           <a href="#projects">Review selected work <span aria-hidden="true">↓</span></a>
         </div>
       </section>
 
       <section className="trust-strip" aria-label="Portfolio access and data policy">
-        <span>01 · PRIVATE REPOSITORIES</span>
-        <span>02 · PROTECTED DEMOS</span>
+        <span>01 · PRIVATE SOURCES</span>
+        <span>02 · HONEST DEMO STATUS</span>
         <span>03 · NO PERSONAL DATA</span>
       </section>
 
@@ -97,9 +112,13 @@ export default function Home() {
                 <ul aria-label={`${project.name} technology`}>
                   {project.stack.map((item) => <li key={item}>{item}</li>)}
                 </ul>
-                <button type="button" disabled aria-label={`${project.name} protected demo link pending access configuration`}>
-                  Protected demo <span aria-hidden="true">↗</span>
-                </button>
+                {project.demoUrl ? (
+                  <a className="demo-link" href={project.demoUrl} target="_blank" rel="noreferrer">
+                    View demo <span aria-hidden="true">↗</span>
+                  </a>
+                ) : (
+                  <span className="demo-status">Interactive demo in preparation.</span>
+                )}
               </div>
             </article>
           ))}
@@ -135,7 +154,7 @@ export default function Home() {
       </section>
 
       <footer>
-        <span>PRIVATE PORTFOLIO · ACCESS IS INVITATION-ONLY</span>
+        <span>CS PORTFOLIO · PUBLIC ENTRY</span>
         <span>Built for technical recruiting conversations.</span>
       </footer>
     </main>

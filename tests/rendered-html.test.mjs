@@ -16,21 +16,25 @@ async function render() {
   );
 }
 
-test("server-renders the private portfolio evidence hub", async () => {
+test("server-renders the public portfolio entry", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   const html = await response.text();
 
-  assert.match(html, /Private portfolio/i);
+  assert.match(html, /<h1>Selected builds<br\/>for <em>recruiter review\.<\/em><\/h1>/);
+  assert.match(html, /Source repositories are private and available for review on request\./);
+  assert.doesNotMatch(html, /github\.com\/charsiu123\/(habits-pwa|study-habit|preset-mall)/);
+  assert.match(html, /CS \/ PORTFOLIO/i);
   assert.match(html, /Habit PWA/i);
   assert.match(html, /Study Habit/i);
   assert.match(html, /Preset Mall/i);
   assert.match(html, /Coursework highlights/i);
   assert.match(html, /No personal data or course-provided materials are included/i);
-  assert.match(html, /Protected demo/i);
+  assert.match(html, /Interactive demo in preparation\./);
+  assert.doesNotMatch(html, /Protected demo/i);
 });
 
-test("ships private-site metadata and noindex headers", async () => {
+test("ships public-entry metadata without noindex headers", async () => {
   const [layout, page, headers, packageJson] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
@@ -38,11 +42,20 @@ test("ships private-site metadata and noindex headers", async () => {
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
-  assert.match(layout, /Private CS Portfolio/);
-  assert.match(layout, /robots:/);
+  assert.match(layout, /CS Portfolio — Selected Builds/);
+  assert.doesNotMatch(layout, /robots:/);
   assert.match(page, /projectCards/);
-  assert.match(headers, /X-Robots-Tag: noindex, nofollow/);
-  assert.match(headers, /Content-Security-Policy/);
+  assert.match(page, /const demoUrls: Record<ProjectId, string \| undefined> = \{/);
+  assert.match(page, /demoUrl: demoUrls\[project\.id\]/);
+  assert.match(page, /demoUrl\?: string/);
+  assert.match(page, /project\.demoUrl \?/);
+  assert.match(page, /<a className="demo-link" href=\{project\.demoUrl\} target="_blank" rel="noreferrer">/);
+  assert.doesNotMatch(headers, /X-Robots-Tag/);
+  assert.match(headers, /X-Content-Type-Options: nosniff/);
+  assert.match(headers, /X-Frame-Options: DENY/);
+  assert.match(headers, /Referrer-Policy: no-referrer/);
+  assert.match(headers, /Permissions-Policy: camera=\(\), microphone=\(\), geolocation=\(\), payment=\(\), usb=\(\)/);
+  assert.match(headers, /Content-Security-Policy: default-src 'self';/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 });
 

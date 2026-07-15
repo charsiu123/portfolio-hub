@@ -30,7 +30,8 @@ h2 { margin-bottom:0; font-size:clamp(2.35rem,5vw,5.2rem); line-height:.94; lett
 h3 { margin-bottom:1rem; font-size:clamp(2rem,3.35vw,3.65rem); line-height:.88; letter-spacing:-.065em; }.card-summary { max-width:28ch; line-height:1.45; }
 .signal-stack { display:flex; flex-wrap:wrap; gap:.38rem; margin:0 0 2rem; }.signal-stack span { border:1px solid rgba(23,32,45,.68); padding:.35rem .47rem; font-size:.73rem; }
 .card-footer { align-items:end; }.card-footer ul { margin:0; padding:0; list-style:none; color:rgba(23,32,45,.7); }.card-footer li+li { margin-top:.18rem; }
-.card-footer button { border:0; background:var(--ink); color:var(--paper); padding:.65rem .72rem; font:700 .67rem/1 ui-monospace, monospace; letter-spacing:.02em; opacity:.83; cursor:not-allowed; }
+.demo-link { background:var(--ink); color:var(--paper); padding:.65rem .72rem; font:700 .67rem/1 ui-monospace, monospace; letter-spacing:.02em; text-decoration:none; }
+.demo-status { max-width:18ch; color:rgba(23,32,45,.78); font:700 .67rem/1.35 ui-monospace, monospace; text-align:right; }
 .method-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; padding:6rem 0; border-top:1px solid var(--line); }.method-grid h2 { max-width:11ch; font-size:clamp(2.15rem,4vw,4rem); }.method-copy { max-width:46ch; font-size:1.1rem; line-height:1.6; }.policy-line { border-top:1px solid var(--ink); padding-top:1rem; font-weight:700; }
 .coursework { padding:4.5rem 0 6.5rem; border-top:1px solid var(--line); }.coursework-layout { display:grid; grid-template-columns:1.25fr .75fr; gap:4rem; }.coursework-layout h2 { font-family:Georgia,serif; font-weight:400; }.coursework-layout p { line-height:1.6; }.coursework-layout p+p { margin-top:1.1rem; }
 footer { display:flex; justify-content:space-between; gap:1rem; padding:1.2rem 0 2rem; border-top:1px solid var(--line); color:var(--muted); font:700 .65rem/1.4 ui-monospace, monospace; letter-spacing:.06em; }
