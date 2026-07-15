@@ -2,6 +2,8 @@
   --color-paper: oklch(95% 0.018 85);
   --color-paper-deep: oklch(91% 0.028 82);
   --color-paper-mark: oklch(88% 0.038 87);
+  --color-sky: oklch(86% 0.055 220);
+  --color-sky-soft: oklch(92% 0.028 220);
   --color-ink: oklch(25% 0.028 72);
   --color-ink-soft: oklch(40% 0.026 74);
   --color-forest: oklch(37% 0.075 153);

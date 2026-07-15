@@ -63,12 +63,15 @@ export default function Home() {
       </nav>
 
       <header className="atlas-hero">
+        <div className="hero-sky" aria-hidden="true" />
+        <div className="hero-fence" aria-hidden="true"><i /><i /><i /><i /><i /><i /></div>
+        <div className="hero-stamp" aria-hidden="true">03<br />GATES</div>
         <div className="hero-route" aria-hidden="true"><span /><span /><span /></div>
         <p className="atlas-eyebrow">PORTFOLIO / 2026 / FIELD NOTES</p>
         <h1>三つの実装を、<br />地図のようにたどる。</h1>
         <div className="hero-caption">
           <p>日々の行動、学びの時間、音を探す道筋。小さな用途から始めた制作物の記録です。</p>
-          <p>動くものは、準備が整い次第ここから開けます。</p>
+          <p>三つのゲートは、ここから実際に開けます。</p>
         </div>
       </header>
 
