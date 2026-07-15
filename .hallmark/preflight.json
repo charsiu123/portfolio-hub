@@ -1,0 +1,13 @@
+{
+  "date": "2026-07-16",
+  "framework": "Next.js 16.2.6 via Vinext 0.0.50 and Vite 8.0.13",
+  "package": "site-creator-vinext-starter@0.1.0",
+  "styling": "Tailwind CSS 4.2.1 imported through app/globals.css",
+  "existing_palette": {
+    "paper": "#f4f5ef",
+    "ink": "#17202d",
+    "line": "#c7cec1"
+  },
+  "motion_dependencies": [],
+  "security_headers": "public/_headers defines nosniff, DENY framing, no-referrer, restrictive Permissions-Policy, and CSP"
+}

@@ -16,25 +16,24 @@ async function render() {
   );
 }
 
-test("server-renders the public portfolio entry", async () => {
+test("server-renders the Japanese exploration-record portfolio", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   const html = await response.text();
 
-  assert.match(html, /<h1>Selected builds<br\/>for <em>recruiter review\.<\/em><\/h1>/);
-  assert.match(html, /Source repositories are private and available for review on request\./);
-  assert.doesNotMatch(html, /github\.com\/charsiu123\/(habits-pwa|study-habit|preset-mall)/);
-  assert.match(html, /CS \/ PORTFOLIO/i);
+  assert.match(html, /制作記録/);
+  assert.match(html, /三つの実装を、<br\/>地図のようにたどる。/);
+  assert.match(html, /公開デモは現在準備中です。/);
+  assert.match(html, /デモの準備状況/);
+  assert.doesNotMatch(html, /The Promised Neverland/i);
+  assert.doesNotMatch(html, /github\.com/i);
   assert.match(html, /Habit PWA/i);
   assert.match(html, /Study Habit/i);
   assert.match(html, /Preset Mall/i);
-  assert.match(html, /Coursework highlights/i);
-  assert.match(html, /No personal data or course-provided materials are included/i);
-  assert.match(html, /Interactive demo in preparation\./);
-  assert.doesNotMatch(html, /Protected demo/i);
+  assert.match(html, /個人情報や配布教材は含めていません。/);
 });
 
-test("ships public-entry metadata without noindex headers", async () => {
+test("keeps demos pending while retaining the safe future open path and security headers", async () => {
   const [layout, page, headers, packageJson] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
@@ -42,7 +41,8 @@ test("ships public-entry metadata without noindex headers", async () => {
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
-  assert.match(layout, /CS Portfolio — Selected Builds/);
+  assert.match(layout, /制作記録ポートフォリオ/);
+  assert.match(layout, /制作物の記録と実装の概要をまとめたポートフォリオ。/);
   assert.doesNotMatch(layout, /robots:/);
   assert.match(page, /projectCards/);
   assert.match(page, /const demoUrls: Record<ProjectId, string \| undefined> = \{/);
@@ -50,6 +50,8 @@ test("ships public-entry metadata without noindex headers", async () => {
   assert.match(page, /demoUrl\?: string/);
   assert.match(page, /project\.demoUrl \?/);
   assert.match(page, /<a className="demo-link" href=\{project\.demoUrl\} target="_blank" rel="noreferrer">/);
+  assert.match(page, /デモを開く/);
+  assert.match(page, /公開デモは現在準備中です。/);
   assert.doesNotMatch(headers, /X-Robots-Tag/);
   assert.match(headers, /X-Content-Type-Options: nosniff/);
   assert.match(headers, /X-Frame-Options: DENY/);

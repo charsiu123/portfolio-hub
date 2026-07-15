@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "../tokens.css";
+@import "./portfolio.css";
 
 :root { --ink:#17202d; --paper:#f4f5ef; --line:#c7cec1; --lime:#d5fb4b; --violet:#d8ceff; --coral:#ff907b; --muted:#647080; }
 * { box-sizing:border-box; }

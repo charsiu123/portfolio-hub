@@ -3,12 +3,12 @@ type ProjectId = "habit-pwa" | "study-habit" | "preset-mall";
 type ProjectCard = {
   id: ProjectId;
   name: string;
-  eyebrow: string;
-  status: string;
+  field: string;
+  record: string;
   summary: string;
   stack: string[];
-  evidence: string[];
-  accent: "lime" | "violet" | "coral";
+  notes: string[];
+  kind: "habits" | "study" | "presets";
   demoUrl?: string;
 };
 
@@ -22,140 +22,117 @@ const projectCards: ProjectCard[] = [
   {
     id: "habit-pwa",
     name: "Habit PWA",
-    eyebrow: "LOCAL-FIRST PWA",
-    status: "Demo-ready",
-    summary:
-      "A browser-native habit timer that stays useful offline and keeps progress on the device.",
+    field: "生活の記録",
+    record: "01 / 手元に残る習慣",
+    summary: "通信がない時間にも使える、端末内完結の習慣タイマー。積み重ねを静かに記録するためのPWAです。",
     stack: ["HTML", "CSS", "JavaScript", "Service Worker"],
-    evidence: ["Offline-capable", "Local progress ledger", "Installable PWA"],
-    accent: "lime",
+    notes: ["オフライン利用", "端末内の記録", "インストール対応"],
+    kind: "habits",
   },
   {
     id: "study-habit",
     name: "Study Habit",
-    eyebrow: "FOCUS DASHBOARD",
-    status: "Demo-ready",
-    summary:
-      "A local study planning interface with editable blocks, accelerated demo timing, and completion history.",
+    field: "学びの設計",
+    record: "02 / 集中を組み立てる",
+    summary: "学習の区切りを編集し、進み方を見返せるローカル中心の計画画面です。",
     stack: ["React", "TypeScript", "Vite", "Local storage"],
-    evidence: ["Editable plan", "Persisted state", "History view"],
-    accent: "violet",
+    notes: ["予定の編集", "状態の保存", "履歴の確認"],
+    kind: "study",
   },
   {
     id: "preset-mall",
     name: "Preset Mall",
-    eyebrow: "MARKETPLACE MVP",
-    status: "Mock product demo",
-    summary:
-      "A client-side music preset marketplace demonstration focused on browsing, discovery, and creator journeys.",
+    field: "発見の導線",
+    record: "03 / 音を探す場所",
+    summary: "音楽プリセットを探し、作り手の入口へ進む体験を試作した、クライアント側のMVPです。",
     stack: ["Next.js", "React", "TypeScript", "Tailwind"],
-    evidence: ["Search & filters", "Creator routes", "Explicit mock flows"],
-    accent: "coral",
+    notes: ["検索と絞り込み", "作り手への導線", "試作フローの明示"],
+    kind: "presets",
   },
-].map((project) => ({
-  ...project,
-  demoUrl: demoUrls[project.id],
-}));
+].map((project) => ({ ...project, demoUrl: demoUrls[project.id] }));
 
 export default function Home() {
   return (
-    <main className="portfolio-shell">
-      <nav className="topbar" aria-label="Portfolio navigation">
-        <a className="wordmark" href="#top" aria-label="CS Portfolio home">
-          <span className="wordmark-mark" aria-hidden="true">↗</span>
-          CS / PORTFOLIO
+    <main className="atlas" id="top">
+      <nav className="atlas-nav" aria-label="ポートフォリオの案内">
+        <a className="atlas-mark" href="#top" aria-label="制作記録の先頭へ">
+          <span aria-hidden="true">○</span>
+          制作記録
         </a>
-        <span className="access-chip">PUBLIC ENTRY</span>
+        <a className="atlas-nav-link" href="#projects">記録をたどる <span aria-hidden="true">↓</span></a>
       </nav>
 
-      <section className="hero" id="top">
-        <div>
-          <p className="kicker">PORTFOLIO INDEX · 2026</p>
-          <h1>Selected builds<br />for <em>recruiter review.</em></h1>
+      <header className="atlas-hero">
+        <div className="hero-route" aria-hidden="true"><span /><span /><span /></div>
+        <p className="atlas-eyebrow">PORTFOLIO / 2026 / FIELD NOTES</p>
+        <h1>三つの実装を、<br />地図のようにたどる。</h1>
+        <div className="hero-caption">
+          <p>日々の行動、学びの時間、音を探す道筋。小さな用途から始めた制作物の記録です。</p>
+          <p>動くものは、準備が整い次第ここから開けます。</p>
         </div>
-        <div className="hero-note">
-          <p>
-            Source repositories are private and available for review on request.
-          </p>
-          <a href="#projects">Review selected work <span aria-hidden="true">↓</span></a>
-        </div>
+      </header>
+
+      <section className="legend" aria-label="この記録について">
+        <p><span aria-hidden="true">●</span> 自分で書いた実装と要約</p>
+        <p><span aria-hidden="true">△</span> 公開可否をそのまま記載</p>
+        <p><span aria-hidden="true">□</span> 個人情報や配布教材は含めていません。</p>
       </section>
 
-      <section className="trust-strip" aria-label="Portfolio access and data policy">
-        <span>01 · PRIVATE SOURCES</span>
-        <span>02 · HONEST DEMO STATUS</span>
-        <span>03 · NO PERSONAL DATA</span>
-      </section>
-
-      <section className="projects" id="projects" aria-labelledby="projects-title">
-        <div className="section-heading">
-          <p className="kicker">SELECTED WORK</p>
-          <h2 id="projects-title">Three different ways<br />to make software useful.</h2>
+      <section className="portfolio-grid" id="projects" aria-labelledby="projects-title">
+        <div className="grid-intro">
+          <p className="atlas-eyebrow">SELECTED RECORDS</p>
+          <h2 id="projects-title">用途ごとに、<br />違う手触りを。</h2>
+          <p>それぞれの制作物は、実装の選択と現在の公開状況を一緒に残しています。</p>
         </div>
 
-        <div className="project-grid">
-          {projectCards.map((project, index) => (
-            <article className={`project-card ${project.accent}`} key={project.name}>
-              <div className="card-topline">
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <span>{project.status}</span>
-              </div>
-              <div className="card-core">
-                <p className="card-eyebrow">{project.eyebrow}</p>
-                <h3>{project.name}</h3>
-                <p className="card-summary">{project.summary}</p>
-              </div>
-              <div className="signal-stack" aria-label={`${project.name} implementation evidence`}>
-                {project.evidence.map((item) => <span key={item}>{item}</span>)}
-              </div>
-              <div className="card-footer">
-                <ul aria-label={`${project.name} technology`}>
-                  {project.stack.map((item) => <li key={item}>{item}</li>)}
-                </ul>
+        {projectCards.map((project) => (
+          <article className={`record-card record-card--${project.kind}`} key={project.name}>
+            <div className="record-map" aria-hidden="true"><i /><i /><i /></div>
+            <div className="record-head">
+              <p>{project.record}</p>
+              <span>{project.field}</span>
+            </div>
+            <div className="record-body">
+              <h3>{project.name}</h3>
+              <p>{project.summary}</p>
+            </div>
+            <ul className="record-notes" aria-label={`${project.name} の特徴`}>
+              {project.notes.map((note) => <li key={note}>{note}</li>)}
+            </ul>
+            <footer className="record-footer">
+              <ul aria-label={`${project.name} の技術`}>
+                {project.stack.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+              <div className="demo-area">
+                <span className="demo-label">デモの準備状況</span>
                 {project.demoUrl ? (
                   <a className="demo-link" href={project.demoUrl} target="_blank" rel="noreferrer">
-                    View demo <span aria-hidden="true">↗</span>
+                    デモを開く <span aria-hidden="true">↗</span>
                   </a>
                 ) : (
-                  <span className="demo-status">Interactive demo in preparation.</span>
+                  <span className="demo-status">公開デモは現在準備中です。</span>
                 )}
               </div>
-            </article>
-          ))}
-        </div>
+            </footer>
+          </article>
+        ))}
       </section>
 
-      <section className="method-grid" aria-labelledby="method-title">
+      <section className="field-note" aria-labelledby="note-title">
+        <div className="field-note-mark" aria-hidden="true"><span /><span /></div>
         <div>
-          <p className="kicker">IMPLEMENTATION NOTES</p>
-          <h2 id="method-title">What this portfolio does—and does not—contain.</h2>
+          <p className="atlas-eyebrow">FIELD NOTE</p>
+          <h2 id="note-title">公開できる範囲を、<br />正確に扱う。</h2>
         </div>
-        <div className="method-copy">
-          <p>
-            Every project is prepared from an isolated copy. Production demos are intentionally limited to safe, client-side interactions: no payments, no accounts, no uploads, and no hidden API credentials.
-          </p>
-          <p className="policy-line">No personal data or course-provided materials are included.</p>
+        <div className="field-note-copy">
+          <p>制作物は安全なクライアント側の操作を中心に構成しています。決済、アカウント登録、アップロード、非公開の認証情報は扱いません。</p>
+          <p>ソースや追加資料が必要な場合は、内容に応じて説明します。</p>
         </div>
       </section>
 
-      <section className="coursework" aria-labelledby="coursework-title">
-        <p className="kicker">COURSEWORK HIGHLIGHTS</p>
-        <div className="coursework-layout">
-          <h2 id="coursework-title">Learning is documented<br />without redistributing it.</h2>
-          <div>
-            <p>
-              Coursework is represented as independently written learning summaries: data modeling, algorithmic organization, state management, testing walkthroughs, and technical writing.
-            </p>
-            <p>
-              Course starter code, assignment prompts, tests, textbooks, and supplied datasets are excluded from this portfolio.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <footer>
-        <span>CS PORTFOLIO · PUBLIC ENTRY</span>
-        <span>Built for technical recruiting conversations.</span>
+      <footer className="atlas-footer">
+        <span>制作記録 / 2026</span>
+        <span>静かな実装のための公開入口</span>
       </footer>
     </main>
   );
