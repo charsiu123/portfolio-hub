@@ -2,6 +2,8 @@
 
 This repository is the public entry point for selected Computer Science projects.
 
+**Portfolio website:** [Open the portfolio](https://charsiu123-private-cs-portfolio.personal-mem0mem0.chatgpt.site)
+
 ## Selected work
 
 ### Habit PWA
