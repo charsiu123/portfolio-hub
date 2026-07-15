@@ -23,7 +23,6 @@ test("server-renders the Japanese exploration-record portfolio", async () => {
 
   assert.match(html, /制作記録/);
   assert.match(html, /三つの実装を、<br\/>地図のようにたどる。/);
-  assert.match(html, /公開デモは現在準備中です。/);
   assert.match(html, /デモの準備状況/);
   assert.doesNotMatch(html, /The Promised Neverland/i);
   assert.doesNotMatch(html, /github\.com/i);
@@ -33,7 +32,9 @@ test("server-renders the Japanese exploration-record portfolio", async () => {
   assert.match(html, /個人情報や配布教材は含めていません。/);
 });
 
-test("keeps demos pending while retaining the safe future open path and security headers", async () => {
+test("renders same-origin demo links while retaining security headers", async () => {
+  const response = await render();
+  const html = await response.text();
   const [layout, page, headers, packageJson] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
@@ -49,9 +50,16 @@ test("keeps demos pending while retaining the safe future open path and security
   assert.match(page, /demoUrl: demoUrls\[project\.id\]/);
   assert.match(page, /demoUrl\?: string/);
   assert.match(page, /project\.demoUrl \?/);
-  assert.match(page, /<a className="demo-link" href=\{project\.demoUrl\} target="_blank" rel="noreferrer">/);
+  assert.doesNotMatch(page, /target="_blank"/);
   assert.match(page, /デモを開く/);
-  assert.match(page, /公開デモは現在準備中です。/);
+  for (const [projectId, demoUrl] of [
+    ["habit-pwa", "/demos/habits/"],
+    ["study-habit", "/demos/study/"],
+    ["preset-mall", "/demos/presets/"],
+  ]) {
+    assert.match(page, new RegExp(`"${projectId}": "${demoUrl}"`));
+    assert.match(html, new RegExp(`href="${demoUrl}"`));
+  }
   assert.doesNotMatch(headers, /X-Robots-Tag/);
   assert.match(headers, /X-Content-Type-Options: nosniff/);
   assert.match(headers, /X-Frame-Options: DENY/);

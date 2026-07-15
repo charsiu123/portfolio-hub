@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0C0C0C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Habits">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Habits</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+:root{
+  --bg:#0C0C0C;
+  --surface:#161616;
+  --surface2:#1e1e1e;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --text:rgba(255,255,255,0.92);
+  --muted:rgba(255,255,255,0.38);
+  --dim:rgba(255,255,255,0.18);
+
+  --c-gray:#525252;
+  --c-min:#2573C8;
+  --c-normal:#0A7A5A;
+  --c-stretch:#d8d8d8;
+  --c-active:#F59E0B;
+  --c-active-text:#F5D190;
+  --c-active-bg:rgba(245,158,11,0.07);
+
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:-apple-system,'Helvetica Neue',sans-serif;
+}
+
+html,body{
+  height:100%;background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:16px;line-height:1.4;
+  overscroll-behavior:none;user-select:none;-webkit-user-select:none;
+}
+
+#app{
+  display:flex;flex-direction:column;
+  height:100%;max-width:480px;margin:0 auto;
+}
+
+/* ── Header ── */
+.hdr{
+  flex-shrink:0;
+  padding:calc(var(--safe-t) + 16px) 20px 14px;
+  border-bottom:0.5px solid var(--border);
+}
+.hdr-label{
+  font-size:10.5px;color:var(--muted);
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;
+}
+.hdr-row{display:flex;align-items:baseline;gap:14px}
+.hdr-today{
+  font-family:var(--mono);font-size:34px;font-weight:500;
+  letter-spacing:-2px;line-height:1;
+}
+.hdr-week{font-size:12px;color:var(--muted)}
+.active-pill{
+  display:none;align-items:center;gap:6px;
+  margin-top:9px;font-size:11.5px;color:var(--c-active);
+}
+.active-pill.on{display:flex}
+.pulse{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--c-active);flex-shrink:0;
+  animation:pulse 1.6s ease-in-out infinite;
+}
+
+/* ── List ── */
+.list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+.row{
+  padding:12px 18px;
+  border-bottom:0.5px solid var(--border);
+  transition:background .22s;
+  position:relative;
+}
+.row.active{background:var(--c-active-bg)}
+
+.row-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.row-name{
+  flex:1;font-size:14.5px;font-weight:500;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.row.active .row-name{color:var(--c-active-text)}
+
+.row-time{
+  font-family:var(--mono);font-size:13px;
+  min-width:52px;text-align:right;flex-shrink:0;
+  transition:color .4s;
+}
+
+.btn-toggle{
+  width:33px;height:33px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  background:rgba(255,255,255,0.09);color:rgba(255,255,255,0.7);
+  font-size:11px;transition:transform .14s ease,background .18s;
+}
+.btn-toggle.on{background:var(--c-active);color:#1a1000}
+.btn-toggle:active{transform:scale(.86)}
+
+/* Bar */
+.bar-track{
+  position:relative;height:4px;
+  background:rgba(255,255,255,0.07);border-radius:2px;overflow:visible;
+}
+.bar-fill{
+  position:absolute;left:0;top:0;bottom:0;border-radius:2px;
+  transition:width .9s cubic-bezier(.4,0,.2,1),background-color .45s;
+}
+.bar-mk{
+  position:absolute;top:-3px;bottom:-3px;width:1.5px;
+  background:rgba(255,255,255,0.2);border-radius:1px;
+}
+.bar-labels{display:flex;justify-content:space-between;margin-top:5px}
+.bar-stage{font-size:10.5px;font-weight:500;transition:color .4s}
+.bar-targets{font-family:var(--mono);font-size:10px;color:var(--dim)}
+
+/* Empty */
+.empty{
+  padding:80px 24px;text-align:center;
+  color:var(--muted);font-size:14px;line-height:2.2;
+}
+
+/* ── Bottom ── */
+.btm{
+  flex-shrink:0;
+  padding:10px 14px calc(var(--safe-b) + 10px);
+  border-top:0.5px solid var(--border);
+  display:flex;gap:8px;
+}
+.btm-btn{
+  flex:1;padding:11px 0;border-radius:12px;
+  background:rgba(255,255,255,0.055);
+  border:0.5px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.6);font-size:13px;
+  font-family:var(--sans);cursor:pointer;
+  transition:background .15s;
+}
+.btm-btn:active{background:rgba(255,255,255,0.1)}
+.btm-btn.accent{
+  background:rgba(245,158,11,0.12);
+  border-color:rgba(245,158,11,0.22);
+  color:var(--c-active);
+}
+
+/* ── Sheet ── */
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.58);
+  z-index:100;opacity:0;pointer-events:none;transition:opacity .28s;
+}
+.overlay.on{opacity:1;pointer-events:all}
+
+.sheet{
+  position:fixed;bottom:0;left:0;right:0;
+  max-width:480px;margin:0 auto;
+  background:#1c1c1c;border-radius:22px 22px 0 0;
+  border-top:0.5px solid var(--border2);
+  padding:18px 20px calc(var(--safe-b) + 22px);
+  transform:translateY(100%);z-index:101;
+  transition:transform .32s cubic-bezier(.32,.72,0,1);
+}
+.sheet.on{transform:translateY(0)}
+
+.sh-handle{
+  width:38px;height:4px;border-radius:2px;
+  background:rgba(255,255,255,0.14);margin:0 auto 18px;
+}
+.sh-title{font-size:16px;font-weight:500;margin-bottom:18px}
+
+.sh-label{
+  font-size:10.5px;color:var(--muted);
+  letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;
+}
+.sh-input{
+  width:100%;padding:11px 14px;
+  background:rgba(255,255,255,0.06);
+  border:0.5px solid rgba(255,255,255,0.12);
+  border-radius:10px;color:var(--text);
+  font-size:15px;font-family:var(--sans);
+  outline:none;-webkit-appearance:none;
+  transition:border-color .18s;
+}
+.sh-input:focus{border-color:rgba(245,158,11,.4)}
+.sh-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
+.sh-sub{font-size:10px;margin-bottom:5px;font-weight:500}
+
+.sh-save{
+  width:100%;padding:13px;border-radius:12px;
+  background:var(--c-active);border:none;
+  color:#1a0f00;font-size:15px;font-weight:600;
+  font-family:var(--sans);cursor:pointer;transition:opacity .15s;
+}
+.sh-save:active{opacity:.82}
+
+/* ── Toast ── */
+.toast{
+  position:fixed;bottom:calc(var(--safe-b) + 90px);
+  left:50%;transform:translateX(-50%) translateY(14px);
+  background:rgba(28,28,28,.97);border:0.5px solid rgba(255,255,255,.13);
+  color:var(--text);font-size:13px;padding:9px 18px;
+  border-radius:20px;pointer-events:none;opacity:0;z-index:200;
+  white-space:nowrap;transition:opacity .2s,transform .2s;
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── Animations ── */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes row-in{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+.row{animation:row-in .22s ease both}
+
+/* ── History & detail ── */
+.history-view{
+  position:fixed;inset:0;z-index:300;max-width:480px;margin:0 auto;
+  display:flex;flex-direction:column;background:var(--bg);
+  transform:translateX(104%);visibility:hidden;
+  transition:transform .3s cubic-bezier(.32,.72,0,1),visibility .3s;
+}
+.history-view.on{transform:translateX(0);visibility:visible}
+.history-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:calc(var(--safe-t) + 14px) 18px 14px;border-bottom:.5px solid var(--border);
+}
+.history-title{font-size:17px;font-weight:600;letter-spacing:-.2px}
+.icon-btn{
+  width:36px;height:36px;border:0;border-radius:10px;background:var(--surface2);
+  color:var(--text);font-size:20px;cursor:pointer;
+}
+.history-content{flex:1;overflow-y:auto;padding:20px 18px calc(var(--safe-b) + 24px)}
+.history-kicker{font-size:10.5px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase}
+.history-total{font-family:var(--mono);font-size:37px;letter-spacing:-2px;margin:4px 0 5px}
+.history-copy{font-size:12px;color:var(--muted);line-height:1.6}
+.history-section{margin-top:28px}
+.history-section-title{font-size:12px;color:var(--muted);letter-spacing:.04em;margin-bottom:10px}
+.day-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.day-chip{
+  min-width:74px;padding:9px 8px;border-radius:11px;border:.5px solid var(--border2);
+  background:var(--surface);color:var(--muted);font-family:var(--sans);cursor:pointer;text-align:left;
+}
+.day-chip.on{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.32);color:var(--c-active-text)}
+.day-chip-main{display:block;font-size:12px;font-weight:600}.day-chip-sub{display:block;font:10px var(--mono);margin-top:3px;color:var(--dim)}
+.detail-card{background:var(--surface);border:.5px solid var(--border);border-radius:15px;overflow:hidden}
+.detail-row{padding:13px 14px;border-bottom:.5px solid var(--border)}
+.detail-row:last-child{border-bottom:0}
+.detail-top{display:flex;align-items:baseline;gap:12px}.detail-name{flex:1;font-size:14px;font-weight:500}.detail-time{font:13px var(--mono);color:var(--c-active)}
+.detail-meta{display:flex;justify-content:space-between;margin-top:7px;font-size:10.5px;color:var(--muted)}
+.detail-progress{height:3px;border-radius:2px;background:rgba(255,255,255,.07);margin-top:9px;overflow:hidden}.detail-progress span{display:block;height:100%;border-radius:inherit;background:var(--c-active)}
+.detail-empty{padding:22px 16px;color:var(--muted);font-size:12px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-label">今日のトータル</div>
+    <div class="hdr-row">
+      <span class="hdr-today" id="js-today">00:00</span>
+      <span class="hdr-week"  id="js-week">今週 --</span>
+    </div>
+    <div class="active-pill" id="js-pill">
+      <span class="pulse"></span>
+      <span id="js-pill-name"></span>実行中
+    </div>
+  </div>
+
+  <!-- Habit list -->
+  <div class="list" id="js-list"></div>
+
+  <!-- Bottom nav -->
+  <div class="btm">
+    <button class="btm-btn accent" onclick="openSheet()">+ 習慣を追加</button>
+    <button class="btm-btn"        onclick="openDetail()">記録を見る</button>
+  </div>
+</div>
+
+<!-- History and habit detail -->
+<section class="history-view" id="js-history" aria-hidden="true" aria-label="習慣の記録">
+  <header class="history-head">
+    <button class="icon-btn" type="button" onclick="closeDetail()" aria-label="閉じる">‹</button>
+    <div class="history-title">記録と詳細</div>
+    <span style="width:36px" aria-hidden="true"></span>
+  </header>
+  <div class="history-content">
+    <div class="history-kicker">Current progress</div>
+    <div class="history-total" id="js-history-total">00:00</div>
+    <p class="history-copy">現在の合計はこの端末にだけ保存されています。日別の記録は、タイマーを停止した時点から追加されます。</p>
+    <section class="history-section">
+      <h2 class="history-section-title">日別の記録</h2>
+      <div class="day-strip" id="js-history-days"></div>
+    </section>
+    <section class="history-section">
+      <h2 class="history-section-title" id="js-history-day-title">保存済みのセッション</h2>
+      <div class="detail-card" id="js-history-sessions"></div>
+    </section>
+    <section class="history-section">
+      <h2 class="history-section-title">現在の習慣</h2>
+      <div class="detail-card" id="js-history-current"></div>
+    </section>
+  </div>
+</section>
+
+<!-- Add sheet -->
+<div class="overlay" id="js-overlay" onclick="closeSheet()"></div>
+<div class="sheet" id="js-sheet">
+  <div class="sh-handle"></div>
+  <div class="sh-title">習慣を追加</div>
+
+  <div style="margin-bottom:14px">
+    <div class="sh-label">習慣名</div>
+    <input class="sh-input" id="sh-name" type="text" placeholder="例: 読書" maxlength="20" autocomplete="off">
+  </div>
+
+  <div class="sh-label" style="margin-bottom:8px">目標時間（分）</div>
+  <div class="sh-grid">
+    <div>
+      <div class="sh-sub" style="color:rgba(37,115,200,.85)">Minimum</div>
+      <input class="sh-input" id="sh-min"     type="number" placeholder="20" min="1" max="480">
+    </div>
+    <div>
+      <div class="sh-sub" style="color:rgba(10,122,90,.85)">Normal</div>
+      <input class="sh-input" id="sh-normal"  type="number" placeholder="30" min="1" max="480">
+    </div>
+    <div>
+      <div class="sh-sub" style="color:rgba(210,210,210,.75)">Stretch</div>
+      <input class="sh-input" id="sh-stretch" type="number" placeholder="45" min="1" max="480">
+    </div>
+  </div>
+
+  <button class="sh-save" onclick="saveHabit()">追加する</button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="js-toast"></div>
+
+<script src="./history-model.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════════════════════════════
+let habits = [];
+let session = null;  // { habitId, startedAt }
+let tickId  = null;
+
+const K_HABITS  = 'hb2_habits';
+const K_SESSION = 'hb2_session';
+const K_HISTORY = 'hb2_history';
+let historyLedger = {};
+let historyDay = '';
+
+// Committed elapsed + live contribution if active
+function liveElapsed(h) {
+  if (session?.habitId === h.id)
+    return h.elapsed + Math.floor((Date.now() - session.startedAt) / 1000);
+  return h.elapsed;
+}
+
+function getStage(e, h) {
+  return e >= h.stretch ? 3 : e >= h.normal ? 2 : e >= h.min ? 1 : 0;
+}
+
+const STAGE_COL  = ['#525252','#2573C8','#0A7A5A','#d0d0d0'];
+const STAGE_LCOL = ['rgba(255,255,255,.28)','#5AABFF','#2DC8A0','rgba(255,255,255,.78)'];
+const STAGE_LBL  = ['未達','Min 達成','Normal 達成','Stretch 達成！'];
+
+function barColor(stage, isActive) { return isActive ? '#F59E0B' : STAGE_COL[stage]; }
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+function pad(n) { return String(n).padStart(2,'0'); }
+function fmt(s) {
+  s = Math.max(0, Math.floor(s));
+  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sc = s%60;
+  return h > 0 ? `${h}:${pad(m)}:${pad(sc)}` : `${pad(m)}:${pad(sc)}`;
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Persistence
+// ═══════════════════════════════════════════════════════════════════
+function load() {
+  try { habits = JSON.parse(localStorage.getItem(K_HABITS)) || []; } catch { habits = []; }
+  try { session = JSON.parse(localStorage.getItem(K_SESSION)); } catch { session = null; }
+  try { historyLedger = JSON.parse(localStorage.getItem(K_HISTORY)) || {}; } catch { historyLedger = {}; }
+  if (!historyLedger || typeof historyLedger !== 'object' || Array.isArray(historyLedger)) historyLedger = {};
+
+  // Validate session
+  if (session && !habits.find(h => h.id === session.habitId)) session = null;
+
+  // Seed with sample data on first run
+  if (!habits.length) {
+    habits = [
+      { id:uid(), name:'読書',   min:1200, normal:1800, stretch:2700, elapsed:847  },
+      { id:uid(), name:'瞑想',   min:600,  normal:1200, stretch:1800, elapsed:1230 },
+      { id:uid(), name:'運動',   min:1200, normal:2700, stretch:3600, elapsed:0    },
+      { id:uid(), name:'コード', min:3600, normal:5400, stretch:7200, elapsed:5421 },
+    ];
+  }
+}
+
+function persist() {
+  localStorage.setItem(K_HABITS, JSON.stringify(habits));
+  localStorage.setItem(K_HISTORY, JSON.stringify(historyLedger));
+  if (session) localStorage.setItem(K_SESSION, JSON.stringify(session));
+  else         localStorage.removeItem(K_SESSION);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Timer
+// ═══════════════════════════════════════════════════════════════════
+function startTimer(id) {
+  if (session) commitSession(); // stop previous if any
+  session = { habitId: id, startedAt: Date.now() };
+  tickId = setInterval(() => { renderHdr(); renderActiveRow(); }, 1000);
+  wakeLock(true);
+  vibrate(12);
+  persist();
+  render();
+}
+
+function stopTimer() {
+  commitSession();
+  clearInterval(tickId); tickId = null;
+  session = null;
+  wakeLock(false);
+  vibrate([8,50,8]);
+  persist();
+  render();
+}
+
+function commitSession() {
+  if (!session) return;
+  const endedAt = Date.now();
+  const elapsed = Math.max(0, Math.floor((endedAt - session.startedAt) / 1000));
+  habits = habits.map(h =>
+    h.id === session.habitId ? { ...h, elapsed: h.elapsed + elapsed } : h
+  );
+  historyLedger = HabitsHistory.recordSession(
+    historyLedger, session.startedAt, endedAt, session.habitId
+  );
+}
+
+function toggleHabit(id) {
+  if (session?.habitId === id) stopTimer();
+  else startTimer(id);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Wake Lock + Vibration
+// ═══════════════════════════════════════════════════════════════════
+let wl = null;
+async function wakeLock(on) {
+  try {
+    if (on)  { wl = await navigator.wakeLock?.request('screen'); }
+    else     { await wl?.release(); wl = null; }
+  } catch {}
+}
+function vibrate(p) { try { navigator.vibrate?.(p); } catch {} }
+
+// ═══════════════════════════════════════════════════════════════════
+// Render
+// ═══════════════════════════════════════════════════════════════════
+function sortedHabits() {
+  const aid = session?.habitId;
+  return [...habits].sort((a,b) => {
+    if (a.id === aid) return -1;
+    if (b.id === aid) return 1;
+    return liveElapsed(b) - liveElapsed(a);
+  });
+}
+
+function renderHdr() {
+  const total = habits.reduce((s,h) => s + liveElapsed(h), 0);
+  document.getElementById('js-today').textContent = fmt(total);
+  document.getElementById('js-week').textContent  = '今週 ' + fmt(total + 4*3600 + 23*60);
+
+  const pill = document.getElementById('js-pill');
+  if (session) {
+    const h = habits.find(h => h.id === session.habitId);
+    document.getElementById('js-pill-name').textContent = h ? h.name + '　' : '';
+    pill.classList.add('on');
+  } else {
+    pill.classList.remove('on');
+  }
+}
+
+function renderActiveRow() {
+  if (!session) return;
+  const el = document.querySelector(`[data-id="${session.habitId}"]`);
+  if (!el) return;
+  const h = habits.find(h => h.id === session.habitId);
+  if (!h) return;
+  const e = liveElapsed(h);
+  const stage = getStage(e, h);
+  const col = barColor(stage, true);
+  const pct = (Math.min(e / h.stretch, 1) * 100).toFixed(2);
+  el.querySelector('.row-time').textContent = fmt(e);
+  el.querySelector('.row-time').style.color = col;
+  el.querySelector('.bar-fill').style.width = pct + '%';
+  el.querySelector('.bar-fill').style.backgroundColor = col;
+  el.querySelector('.bar-stage').textContent = STAGE_LBL[stage];
+  el.querySelector('.bar-stage').style.color = STAGE_LCOL[stage];
+}
+
+function renderList() {
+  const list = document.getElementById('js-list');
+  const rows = sortedHabits();
+
+  if (!rows.length) {
+    list.innerHTML = `<div class="empty">習慣がまだありません<br>「+ 習慣を追加」から始めましょう</div>`;
+    return;
+  }
+
+  list.innerHTML = rows.map((h, i) => {
+    const isActive = session?.habitId === h.id;
+    const e = liveElapsed(h);
+    const stage = getStage(e, h);
+    const col = barColor(stage, isActive);
+    const pct    = (Math.min(e / h.stretch, 1) * 100).toFixed(2);
+    const minPct = (h.min    / h.stretch * 100).toFixed(2);
+    const norPct = (h.normal / h.stretch * 100).toFixed(2);
+
+    return `
+<div class="row${isActive ? ' active' : ''}" data-id="${h.id}"
+     style="animation-delay:${i * 0.04}s"
+     ontouchstart="startLongPress('${h.id}')"
+     ontouchend="clearLongPress()" ontouchmove="clearLongPress()">
+  <div class="row-top">
+    <span class="row-name">${esc(h.name)}</span>
+    <span class="row-time" style="color:${col}">${fmt(e)}</span>
+    <button class="btn-toggle${isActive ? ' on' : ''}"
+            onclick="toggleHabit('${h.id}')"
+            ontouchstart="event.stopPropagation()"
+            aria-label="${isActive ? '停止' : '開始'}">
+      ${isActive ? '&#9632;' : '&#9654;'}
+    </button>
+  </div>
+  <div class="bar-track">
+    <div class="bar-fill" style="width:${pct}%;background-color:${col}"></div>
+    <div class="bar-mk"   style="left:${minPct}%"></div>
+    <div class="bar-mk"   style="left:${norPct}%"></div>
+  </div>
+  <div class="bar-labels">
+    <span class="bar-stage" style="color:${STAGE_LCOL[stage]}">${STAGE_LBL[stage]}</span>
+    <span class="bar-targets">${fmt(h.min)} &middot; ${fmt(h.normal)} &middot; ${fmt(h.stretch)}</span>
+  </div>
+</div>`;
+  }).join('');
+}
+
+function render() { renderHdr(); renderList(); }
+
+// ═══════════════════════════════════════════════════════════════════
+// Long press → delete
+// ═══════════════════════════════════════════════════════════════════
+let longTimer = null;
+function startLongPress(id) {
+  longTimer = setTimeout(() => {
+    vibrate(30);
+    const h = habits.find(h => h.id === id);
+    if (h && confirm(`「${h.name}」を削除しますか？`)) {
+      if (session?.habitId === id) stopTimer();
+      habits = habits.filter(h => h.id !== id);
+      persist(); render();
+      toast('削除しました');
+    }
+  }, 600);
+}
+function clearLongPress() { clearTimeout(longTimer); longTimer = null; }
+
+// ═══════════════════════════════════════════════════════════════════
+// Add sheet
+// ═══════════════════════════════════════════════════════════════════
+function openSheet() {
+  document.getElementById('js-overlay').classList.add('on');
+  document.getElementById('js-sheet').classList.add('on');
+  setTimeout(() => document.getElementById('sh-name').focus(), 340);
+}
+function closeSheet() {
+  document.getElementById('js-overlay').classList.remove('on');
+  document.getElementById('js-sheet').classList.remove('on');
+}
+function saveHabit() {
+  const name = document.getElementById('sh-name').value.trim();
+  const minM  = parseInt(document.getElementById('sh-min').value)    || 0;
+  const norM  = parseInt(document.getElementById('sh-normal').value) || 0;
+  const strM  = parseInt(document.getElementById('sh-stretch').value)|| 0;
+
+  if (!name)              { toast('習慣名を入力してください'); return; }
+  if (!minM || !norM || !strM) { toast('3つの目標時間を入力してください'); return; }
+  if (!(minM < norM && norM < strM)) { toast('Min < Normal < Stretch にしてください'); return; }
+
+  habits.push({ id:uid(), name, min:minM*60, normal:norM*60, stretch:strM*60, elapsed:0 });
+  persist(); render(); closeSheet();
+
+  ['sh-name','sh-min','sh-normal','sh-stretch'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  toast(`「${name}」を追加しました`);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Local history and detail
+// ═══════════════════════════════════════════════════════════════════
+function dayKey(date) {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+function dateLabel(key) {
+  const [year, month, day] = key.split('-').map(Number);
+  return new Intl.DateTimeFormat('ja-JP', { month:'short', day:'numeric', weekday:'short' })
+    .format(new Date(year, month - 1, day));
+}
+
+function historyRows(rows, emptyCopy) {
+  if (!rows.length) return `<div class="detail-empty">${emptyCopy}</div>`;
+  return rows.map(row => {
+    const stage = getStage(row.elapsed, row);
+    const pct = Math.min(row.elapsed / row.stretch, 1) * 100;
+    return `<div class="detail-row">
+      <div class="detail-top"><span class="detail-name">${esc(row.name)}</span><span class="detail-time">${fmt(row.elapsed)}</span></div>
+      <div class="detail-meta"><span>${STAGE_LBL[stage]}</span><span>${fmt(row.min)} · ${fmt(row.normal)} · ${fmt(row.stretch)}</span></div>
+      <div class="detail-progress"><span style="width:${pct.toFixed(2)}%"></span></div>
+    </div>`;
+  }).join('');
+}
+
+function historyDays() {
+  return [...new Set([...Object.keys(historyLedger), dayKey(new Date())])].sort().reverse();
+}
+
+function selectHistoryDay(key) {
+  historyDay = key;
+  renderHistory();
+}
+
+function renderHistory() {
+  const today = dayKey(new Date());
+  const days = historyDays();
+  if (!historyDay || !days.includes(historyDay)) historyDay = today;
+
+  const currentRows = sortedHabits().map(h => ({ ...h, elapsed:liveElapsed(h) })).filter(h => h.elapsed > 0);
+  const savedRows = HabitsHistory.detailRows(historyLedger, historyDay, habits);
+  const savedTotal = savedRows.reduce((total, row) => total + row.elapsed, 0);
+
+  document.getElementById('js-history-total').textContent = fmt(habits.reduce((total, h) => total + liveElapsed(h), 0));
+  document.getElementById('js-history-days').innerHTML = days.map(key => {
+    const dayTotal = HabitsHistory.detailRows(historyLedger, key, habits).reduce((total, row) => total + row.elapsed, 0);
+    return `<button class="day-chip${key === historyDay ? ' on' : ''}" type="button" onclick="selectHistoryDay('${key}')" aria-pressed="${key === historyDay}">
+      <span class="day-chip-main">${dateLabel(key)}</span><span class="day-chip-sub">${dayTotal ? fmt(dayTotal) : '—'}</span>
+    </button>`;
+  }).join('');
+  document.getElementById('js-history-day-title').textContent = `${dateLabel(historyDay)} の保存済みセッション ${savedTotal ? '· ' + fmt(savedTotal) : ''}`;
+  document.getElementById('js-history-sessions').innerHTML = historyRows(
+    savedRows,
+    historyDay === today
+      ? 'まだ停止済みのセッションはありません。タイマーを停止すると、この日に保存されます。'
+      : 'この日に端末へ保存されたセッションはありません。'
+  );
+  document.getElementById('js-history-current').innerHTML = historyRows(
+    currentRows,
+    '現在の習慣データはありません。'
+  );
+}
+
+function openDetail() {
+  historyDay = dayKey(new Date());
+  renderHistory();
+  const view = document.getElementById('js-history');
+  view.classList.add('on');
+  view.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  view.querySelector('button').focus();
+}
+
+function closeDetail() {
+  const view = document.getElementById('js-history');
+  view.classList.remove('on');
+  view.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Toast
+// ═══════════════════════════════════════════════════════════════════
+let toastTimer = null;
+function toast(msg) {
+  const el = document.getElementById('js-toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('on'), 2400);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Visibility change — sync timer when returning to app
+// ═══════════════════════════════════════════════════════════════════
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && session) {
+    // re-acquire wake lock (may have been released by OS)
+    wakeLock(true);
+    renderHdr();
+    renderActiveRow();
+  }
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && document.getElementById('js-history').classList.contains('on')) {
+    closeDetail();
+  }
+});
+
+// Page hide (iOS: triggers before backgrounding)
+window.addEventListener('pagehide', () => persist());
+
+// ═══════════════════════════════════════════════════════════════════
+// Service Worker
+// ═══════════════════════════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('[SW] registered'))
+      .catch(e  => console.warn('[SW]', e));
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Boot
+// ═══════════════════════════════════════════════════════════════════
+load();
+render();
+
+// Resume tick if session was active
+if (session) {
+  tickId = setInterval(() => { renderHdr(); renderActiveRow(); }, 1000);
+  wakeLock(true);
+}
+</script>
+</body>
+</html>

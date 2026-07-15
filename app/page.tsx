@@ -13,9 +13,9 @@ type ProjectCard = {
 };
 
 const demoUrls: Record<ProjectId, string | undefined> = {
-  "habit-pwa": undefined,
-  "study-habit": undefined,
-  "preset-mall": undefined,
+  "habit-pwa": "/demos/habits/",
+  "study-habit": "/demos/study/",
+  "preset-mall": "/demos/presets/",
 };
 
 const projectCards: ProjectCard[] = [
@@ -106,7 +106,7 @@ export default function Home() {
               <div className="demo-area">
                 <span className="demo-label">デモの準備状況</span>
                 {project.demoUrl ? (
-                  <a className="demo-link" href={project.demoUrl} target="_blank" rel="noreferrer">
+                  <a className="demo-link" href={project.demoUrl}>
                     デモを開く <span aria-hidden="true">↗</span>
                   </a>
                 ) : (
