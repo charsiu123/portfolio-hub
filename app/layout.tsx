@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "制作記録ポートフォリオ | 実装の地図",
-  description: "制作物の記録と実装の概要をまとめたポートフォリオ。",
+  title: "小さな実装の掲示板 | ポートフォリオ",
+  description: "完成したPWAと制作中の試作を、実演リンクとともにまとめたポートフォリオ。",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 

@@ -1,11 +1,11 @@
 [
   {
     "date": "2026-07-16",
-    "macrostructure": "Portfolio Grid",
+    "macrostructure": "Noticeboard Collection",
     "theme": "custom",
-    "theme_axes": "light / roman-serif / chromatic-green",
-    "vibe": "bright paper, quiet tension, forest signal",
-    "enrichment": "Tier-A CSS cartographic marks",
-    "brief": "Japanese standalone portfolio with honest pending demo states"
+    "theme_axes": "bright paper / roman-serif / sky-and-rust marks",
+    "vibe": "bright storybook paper, watchful boundary, red administrative marks",
+    "enrichment": "Tier-A CSS notice sheets, pins, stamps and boundary line",
+    "brief": "Japanese standalone portfolio with one complete PWA and one honest work-in-progress demo"
   }
 ]

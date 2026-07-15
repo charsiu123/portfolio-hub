@@ -21,9 +21,9 @@ test("server-renders only the public noticeboard portfolio cards", async () => {
   assert.equal(response.status, 200);
   const html = await response.text();
 
-  assert.match(html, /制作記録/);
-  assert.match(html, /小さな実装の、<br\/>公開掲示板。/);
-  assert.match(html, /完成/);
+  assert.match(html, /小さな実装の掲示板/);
+  assert.match(html, /つくったものを、<br\/>そのまま見せる。/);
+  assert.match(html, /完成\s*\/\s*ready to try/);
   assert.match(html, /制作中\s*\/\s*prototype in progress/);
   assert.doesNotMatch(html, /The Promised Neverland/i);
   assert.doesNotMatch(html, /github\.com/i);
@@ -31,9 +31,9 @@ test("server-renders only the public noticeboard portfolio cards", async () => {
   assert.match(html, /Preset Mall/i);
   assert.doesNotMatch(html, /Study Habit/i);
   assert.doesNotMatch(html, /demos\/study/i);
-  assert.match(html, /record-card--habits/);
-  assert.match(html, /record-card--presets/);
-  assert.doesNotMatch(html, /record-card--study/);
+  assert.match(html, /project-slip--habits/);
+  assert.match(html, /project-slip--presets/);
+  assert.doesNotMatch(html, /project-slip--study/);
 });
 
 test("renders same-origin demo links while retaining security headers", async () => {
@@ -46,16 +46,15 @@ test("renders same-origin demo links while retaining security headers", async ()
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
-  assert.match(layout, /制作記録ポートフォリオ/);
-  assert.match(layout, /制作物の記録と実装の概要をまとめたポートフォリオ。/);
+  assert.match(layout, /小さな実装の掲示板/);
+  assert.match(layout, /完成したPWAと制作中の試作/);
   assert.doesNotMatch(layout, /robots:/);
   assert.match(page, /projectCards/);
-  assert.match(page, /const demoUrls: Record<ProjectId, string \| undefined> = \{/);
-  assert.match(page, /demoUrl: demoUrls\[project\.id\]/);
-  assert.match(page, /demoUrl\?: string/);
-  assert.match(page, /project\.demoUrl \?/);
+  assert.match(page, /const demoUrls: Record<ProjectId, string> = \{/);
+  assert.match(page, /demoUrls\[project\.id\]/);
   assert.doesNotMatch(page, /target="_blank"/);
-  assert.match(page, /デモを開く/);
+  assert.match(page, /完成版を開く/);
+  assert.match(page, /制作中デモを開く/);
   for (const [projectId, demoUrl] of [
     ["habit-pwa", "/demos/habits/"],
     ["preset-mall", "/demos/presets/"],
