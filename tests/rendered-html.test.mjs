@@ -16,20 +16,24 @@ async function render() {
   );
 }
 
-test("server-renders the Japanese exploration-record portfolio", async () => {
+test("server-renders only the public noticeboard portfolio cards", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   const html = await response.text();
 
   assert.match(html, /制作記録/);
-  assert.match(html, /三つの実装を、<br\/>地図のようにたどる。/);
-  assert.match(html, /デモの準備状況/);
+  assert.match(html, /小さな実装の、<br\/>公開掲示板。/);
+  assert.match(html, /完成/);
+  assert.match(html, /制作中\s*\/\s*prototype in progress/);
   assert.doesNotMatch(html, /The Promised Neverland/i);
   assert.doesNotMatch(html, /github\.com/i);
   assert.match(html, /Habit PWA/i);
-  assert.match(html, /Study Habit/i);
   assert.match(html, /Preset Mall/i);
-  assert.match(html, /個人情報や配布教材は含めていません。/);
+  assert.doesNotMatch(html, /Study Habit/i);
+  assert.doesNotMatch(html, /demos\/study/i);
+  assert.match(html, /record-card--habits/);
+  assert.match(html, /record-card--presets/);
+  assert.doesNotMatch(html, /record-card--study/);
 });
 
 test("renders same-origin demo links while retaining security headers", async () => {
@@ -54,12 +58,13 @@ test("renders same-origin demo links while retaining security headers", async ()
   assert.match(page, /デモを開く/);
   for (const [projectId, demoUrl] of [
     ["habit-pwa", "/demos/habits/"],
-    ["study-habit", "/demos/study/"],
     ["preset-mall", "/demos/presets/"],
   ]) {
     assert.match(page, new RegExp(`"${projectId}": "${demoUrl}"`));
     assert.match(html, new RegExp(`href="${demoUrl}"`));
   }
+  assert.doesNotMatch(page, /study-habit/i);
+  assert.doesNotMatch(page, /demos\/study/i);
   assert.doesNotMatch(headers, /X-Robots-Tag/);
   assert.match(headers, /X-Content-Type-Options: nosniff/);
   assert.match(headers, /X-Frame-Options: DENY/);

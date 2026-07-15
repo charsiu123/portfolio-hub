@@ -1,10 +1,11 @@
-type ProjectId = "habit-pwa" | "study-habit" | "preset-mall";
+type ProjectId = "habit-pwa" | "preset-mall";
 
 type ProjectCard = {
   id: ProjectId;
   name: string;
   field: string;
   record: string;
+  status: string;
   summary: string;
   stack: string[];
   notes: string[];
@@ -14,7 +15,6 @@ type ProjectCard = {
 
 const demoUrls: Record<ProjectId, string | undefined> = {
   "habit-pwa": "/demos/habits/",
-  "study-habit": "/demos/study/",
   "preset-mall": "/demos/presets/",
 };
 
@@ -24,26 +24,18 @@ const projectCards: ProjectCard[] = [
     name: "Habit PWA",
     field: "生活の記録",
     record: "01 / 手元に残る習慣",
+    status: "完成",
     summary: "通信がない時間にも使える、端末内完結の習慣タイマー。積み重ねを静かに記録するためのPWAです。",
     stack: ["HTML", "CSS", "JavaScript", "Service Worker"],
     notes: ["オフライン利用", "端末内の記録", "インストール対応"],
     kind: "habits",
   },
   {
-    id: "study-habit",
-    name: "Study Habit",
-    field: "学びの設計",
-    record: "02 / 集中を組み立てる",
-    summary: "学習の区切りを編集し、進み方を見返せるローカル中心の計画画面です。",
-    stack: ["React", "TypeScript", "Vite", "Local storage"],
-    notes: ["予定の編集", "状態の保存", "履歴の確認"],
-    kind: "study",
-  },
-  {
     id: "preset-mall",
     name: "Preset Mall",
     field: "発見の導線",
-    record: "03 / 音を探す場所",
+    record: "02 / 音を探す場所",
+    status: "制作中 / prototype in progress",
     summary: "音楽プリセットを探し、作り手の入口へ進む体験を試作した、クライアント側のMVPです。",
     stack: ["Next.js", "React", "TypeScript", "Tailwind"],
     notes: ["検索と絞り込み", "作り手への導線", "試作フローの明示"],
@@ -68,10 +60,10 @@ export default function Home() {
         <div className="hero-stamp" aria-hidden="true">03<br />GATES</div>
         <div className="hero-route" aria-hidden="true"><span /><span /><span /></div>
         <p className="atlas-eyebrow">PORTFOLIO / 2026 / FIELD NOTES</p>
-        <h1>三つの実装を、<br />地図のようにたどる。</h1>
+        <h1>小さな実装の、<br />公開掲示板。</h1>
         <div className="hero-caption">
           <p>日々の行動、学びの時間、音を探す道筋。小さな用途から始めた制作物の記録です。</p>
-          <p>三つのゲートは、ここから実際に開けます。</p>
+          <p>完成したものと、制作途中のものを、そのまま置いています。</p>
         </div>
       </header>
 
@@ -89,11 +81,11 @@ export default function Home() {
         </div>
 
         {projectCards.map((project) => (
-          <article className={`record-card record-card--${project.kind}`} key={project.name}>
+            <article className={`record-card collection-card record-card--${project.kind}`} key={project.name}>
             <div className="record-map" aria-hidden="true"><i /><i /><i /></div>
             <div className="record-head">
               <p>{project.record}</p>
-              <span>{project.field}</span>
+              <span>{project.status}</span>
             </div>
             <div className="record-body">
               <h3>{project.name}</h3>
