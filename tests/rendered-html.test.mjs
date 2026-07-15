@@ -21,8 +21,11 @@ test("server-renders only the public noticeboard portfolio cards", async () => {
   assert.equal(response.status, 200);
   const html = await response.text();
 
-  assert.match(html, /小さな実装の掲示板/);
-  assert.match(html, /つくったものを、<br\/>そのまま見せる。/);
+  assert.match(html, /ポートフォリオ/);
+  assert.match(html, /Codex、Claude Codeを使用しながら/);
+  assert.match(html, /完成版・試作版の動いているものが見れます。/);
+  assert.doesNotMatch(html, /二つの入口。/);
+  assert.doesNotMatch(html, /見せられる範囲を、/);
   assert.match(html, /完成\s*\/\s*ready to try/);
   assert.match(html, /制作中\s*\/\s*prototype in progress/);
   assert.doesNotMatch(html, /The Promised Neverland/i);
@@ -46,7 +49,7 @@ test("renders same-origin demo links while retaining security headers", async ()
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
-  assert.match(layout, /小さな実装の掲示板/);
+  assert.match(layout, /title: "ポートフォリオ"/);
   assert.match(layout, /完成したPWAと制作中の試作/);
   assert.doesNotMatch(layout, /robots:/);
   assert.match(page, /projectCards/);

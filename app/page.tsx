@@ -48,9 +48,9 @@ export default function Home() {
       <nav className="board-nav" aria-label="ポートフォリオの案内">
         <a className="board-mark" href="#top" aria-label="制作掲示板の先頭へ">
           <span aria-hidden="true">✦</span>
-          小さな実装の掲示板
+          ポートフォリオ
         </a>
-        <a className="board-nav-link" href="#collection">展示を見る <span aria-hidden="true">↓</span></a>
+        <a className="board-nav-link" href="#collection">制作を見る <span aria-hidden="true">↓</span></a>
       </nav>
 
       <header className="board-hero">
@@ -60,10 +60,10 @@ export default function Home() {
         <div className="thread thread-one" aria-hidden="true" />
         <div className="thread thread-two" aria-hidden="true" />
         <p className="board-eyebrow">PERSONAL BUILD LOG / 2026</p>
-        <h1>つくったものを、<br />そのまま見せる。</h1>
+        <h1>ポートフォリオ</h1>
         <div className="hero-note">
           <span className="note-pin" aria-hidden="true" />
-          <p>完成したPWAと、いま育てている試作。実際に触れる入口だけを、ここに留めています。</p>
+          <p>Codex、Claude Codeを使用しながら、自分の使いたいプロダクトをたまに作っています。</p>
         </div>
       </header>
 
@@ -76,8 +76,7 @@ export default function Home() {
       <section className="collection" id="collection" aria-labelledby="collection-title">
         <div className="collection-heading">
           <p className="board-eyebrow">THE COLLECTION</p>
-          <h2 id="collection-title">二つの入口。<br />一つは完成、もう一つは途中。</h2>
-          <p>カードを開くと、各制作物の実演ページに移動します。</p>
+          <p id="collection-title">それぞれwebsiteに飛んで、完成版・試作版の動いているものが見れます。</p>
         </div>
 
         <div className="collection-list">
@@ -112,18 +111,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="board-note" aria-labelledby="note-title">
-        <div className="note-number" aria-hidden="true">NOTE<br />07</div>
-        <div>
-          <p className="board-eyebrow">ON WHAT IS SHOWN</p>
-          <h2 id="note-title">見せられる範囲を、<br />正確に。</h2>
-        </div>
-        <p>このページには、外部決済・登録・アップロードを伴わない実演だけを掲載しています。追加の実装内容については、必要に応じて説明します。</p>
-      </section>
-
       <footer className="board-footer">
-        <span>PERSONAL BUILD LOG / 2026</span>
-        <span>小さな実装の公開入口</span>
+        <span>PORTFOLIO / 2026</span>
       </footer>
     </main>
   );
